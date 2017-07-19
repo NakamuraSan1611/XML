@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,13 @@ using System.Xml.Linq;
 
 namespace XML
 {
+    class Item
+    {
+        public string Litle { get; set; }
+        public string Link { get; set; }
+        public string Description { get; set; }
+        public string PubDate { get; set; }
+    }
     class Order
     {
         public int id { get; set; }
@@ -39,6 +47,14 @@ namespace XML
     {
         static void Main(string[] args)
         {
+            string url = "https://habrahabr.ru/rss/interesting/";
+            byte[] data;
+            using (WebClient webClient = new WebClient())
+                data = webClient.DownloadData(url);
+
+            string str = Encoding.GetEncoding("UTF-8").GetString(data);
+            XDocument xd = XDocument.Parse(str);
+            Console.WriteLine(str);
             string path = @"C: \Users\СантыбаевХ\Documents\visual studio 2015\Projects";
             string[] files = Directory.GetDirectories(path, "*", SearchOption.AllDirectories);
             List<Order> oreders = new List<Order>();
@@ -77,7 +93,7 @@ namespace XML
 
             XElement ordersRoot = new XElement("orders");
             XElement xmlOrders = new XElement("order");
-           // XAttribute orderAttr = new XAttribute();
+            // XAttribute orderAttr = new XAttribute();
             MethodInfo[] mInfo = typeof(Order).GetMethods();
             PropertyInfo[] pInfo = typeof(Order).GetProperties();
             foreach (var item in order)
